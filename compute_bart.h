@@ -21,7 +21,7 @@ struct compute_bart {
       run_params.init(nd_, lambda_, burn_, m_, nc_, nu_, kfac_);
    }
 
-   void run();
+   void train();
 
    dinfo data;
    pinfo mcmc_params;
