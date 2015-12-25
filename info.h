@@ -17,12 +17,11 @@ struct dinfo {
 
 //prior and mcmc
 struct pinfo {
-   pinfo(double pbd_=1.0, double pb_=0.5, double alpha_=0.95, double beta_=0.5, double tau_=1.0, double sigma_=1.0) {
-      init(pbd_, pb_, alpha_, beta_, tau_, sigma_);
+   pinfo(double pb_=0.5, double alpha_=0.95, double beta_=2.0, double tau_=1.0, double sigma_=1.0) {
+      init(pb_, alpha_, beta_, tau_, sigma_);
    }
 
-   void init(double pbd_, double pb_, double alpha_, double beta_, double tau_, double sigma_) {
-      pbd = pbd_;
+   void init(double pb_, double alpha_, double beta_, double tau_, double sigma_) {
       pb = pb_;
       alpha = alpha_;
       beta = beta_;
@@ -31,7 +30,6 @@ struct pinfo {
    }
 
 //mcmc info
-   double pbd; //prob of birth/death
    double pb;  //prob of birth
 //prior info
    double alpha;
