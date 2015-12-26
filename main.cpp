@@ -32,8 +32,12 @@ int main(int argc, char **argv) {
    fx.close();
 
    compute_bart bart_regressor;
+   bart_regressor.set_insample_matrix(n, p, x);
+   bart_regressor.set_insample_target(n, y);
    double* y1 = new double[n];
-   bart_regressor.train(n, p, x, y, n, x, y1);
+   bart_regressor.set_outsample_matrix(n, p, x);
+   bart_regressor.set_outsample_target(n, y1);
+   bart_regressor.fit();
    // bart_regressor.predict(n, p, x, y);
 
    for(size_t i=0;i<n;++i) std::cout << y1[i] << ' ';

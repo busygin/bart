@@ -15,6 +15,18 @@ class compute_bart {
 public:
    compute_bart() {}
 
+   void set_insample_matrix(size_t n, size_t p, double *x) {
+      insample_data.n = n; insample_data.p = p; insample_data.x = x;
+   }
+
+   void set_insample_target(size_t n, double *y) { insample_data.y = y; }
+
+   void set_outsample_matrix(size_t n, size_t p, double *x) {
+      outsample_data.n = n; outsample_data.p = p; outsample_data.x = x;
+   }
+
+   void set_outsample_target(size_t n, double *y) { outsample_data.y = y; }
+
    void set_mcmc_params(double pb_=0.5, double alpha_=0.95, double beta_=2.0, double tau_=1.0, double sigma_=1.0) {
       mcmc_params.init(pb_, alpha_, beta_, tau_, sigma_);
    }
@@ -23,8 +35,11 @@ public:
       run_params.init(nd_, lambda_, burn_, m_, nc_, nu_, kfac_);
    }
 
-   void train(size_t n, size_t p, double *x, double *y, size_t n1=0, double *x1=nullptr, double *y1=nullptr);
-   void predict(size_t n, size_t p, double *x, double *y);
+   void fit();
+   void predict();
+
+   dinfo insample_data;
+   dinfo outsample_data;
 
    pinfo mcmc_params;
    rinfo run_params;
