@@ -1,15 +1,16 @@
-//
-// Created by busygin on 12/24/15.
-//
+%module bart
+%{
+/* Includes the header in the wrapper code */
+#include "compute_bart.h"
+%}
 
-#ifndef BART_COMPUTE_BART_H
-#define BART_COMPUTE_BART_H
+%include "numpy.i"
 
+%init %{
+import_array();
+%}
 
-#include <cstddef>
-#include "info.h"
-#include "tree.h"
-
+%apply (size_t DIM1, size_t DIM2, double* IN_ARRAY1, int DIM1) {(size_t n, size_t p, double *x, double *y, size_t n1, double *x1, double *y1)};
 
 class compute_bart {
 public:
@@ -32,6 +33,3 @@ public:
    xinfo xi;
    std::vector<tree> t;
 };
-
-
-#endif //BART_COMPUTE_BART_H

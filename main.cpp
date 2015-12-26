@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
    // bart_regressor.predict(n, p, x, y);
 
    for(size_t i=0;i<n;++i) std::cout << y1[i] << ' ';
+   std::cout << std::endl;
 
    delete[] y1;
    delete[] x;
