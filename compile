@@ -1,0 +1,3 @@
+swig -c++ -python bart.i
+g++ -std=c++11 -fpic -O3 -c -Wall -I/home/busygin/anaconda2/include/python2.7 -I/home/busygin/anaconda2/lib/python2.7/site-packages/numpy/core/include bd.cpp compute_bart.cpp funs.cpp rng.cpp tree.cpp bart_wrap.cxx
+g++ -shared *.o -o _bart.so
