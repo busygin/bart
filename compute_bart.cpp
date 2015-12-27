@@ -40,6 +40,7 @@ void compute_bart::fit() {
    makexinfo(insample_data.p, insample_data.n, insample_data.x, xi, run_params.nc);
 
    //trees
+   t.clear();
    t.resize(run_params.m);
    for(size_t i=0;i<run_params.m;++i) t[i].setm(ybar/run_params.m); //if you sum the fit over the trees you get the fit.
 
