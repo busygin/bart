@@ -19,34 +19,37 @@ That is how the old code works.
 */
 
 #ifdef MPIBART
-bool bd(tree& x, xinfo& xi, pinfo& pi, RNG& gen, size_t numslaves)
+bool bd(tree& x, xinfo& xi, pinfo& pi, std::default_random_engine& gen, size_t numslaves)
 #else
-bool bd(tree& x, xinfo& xi, dinfo& di, pinfo& pi, RNG& gen)
+bool bd(tree& x, xinfo& xi, dinfo& di, pinfo& pi, std::default_random_engine& gen)
 #endif
 {
    tree::npv goodbots;  //nodes we could birth at (split on)
    double PBx = getpb(x,xi,pi,goodbots); //prob of a birth at x
 
-   if(gen.uniform() < PBx) { //do birth or death
+   std::uniform_real_distribution<double> uniform(0.0, 1.0);
+   std::normal_distribution<double> normal(0.0, 1.0);
+
+   if(uniform(gen) < PBx) { //do birth or death
 
       //--------------------------------------------------
       //draw proposal
 
       //draw bottom node, choose node index ni from list in goodbots 
-      size_t ni = floor(gen.uniform()*goodbots.size()); 
+      size_t ni = floor(uniform(gen)*goodbots.size()); 
       tree::tree_p nx = goodbots[ni]; //the bottom node we might birth at
 
       //draw v,  the variable
       std::vector<size_t> goodvars; //variables nx can split on
       getgoodvars(nx,xi,goodvars);
-      size_t vi = floor(gen.uniform()*goodvars.size()); //index of chosen split variable
+      size_t vi = floor(uniform(gen)*goodvars.size()); //index of chosen split variable
       size_t v = goodvars[vi];
 
       //draw c, the cutpoint
       int L,U;
       L=0; U = xi[v].size()-1;
       nx->rg(v,&L,&U);
-      size_t c = L + floor(gen.uniform()*(U-L+1)); //U-L+1 is number of available split points
+      size_t c = L + floor(uniform(gen)*(U-L+1)); //U-L+1 is number of available split points
 
       //--------------------------------------------------
       //compute things needed for metropolis ratio
@@ -139,18 +142,18 @@ bool bd(tree& x, xinfo& xi, dinfo& di, pinfo& pi, RNG& gen)
       //finally ready to try metrop
       double a,b,s2,yb;
       double mul,mur; //means for new bottom nodes, left and right
-      if(gen.uniform() < alpha) {
+      if(uniform(gen) < alpha) {
          //draw mul, mean for left node
          a= 1.0/(pi.tau*pi.tau); //a = 1/tau^2
          s2 = pi.sigma*pi.sigma; // sigma^2
          //left mean
          yb = sl.sy/sl.n;
          b = sl.n/s2; // b=n/sigma^2
-         mul = b*yb/(a+b) + gen.normal()/sqrt(a+b);
+         mul = b*yb/(a+b) + normal(gen)/sqrt(a+b);
          //draw mul, mean for left node
          yb = sr.sy/sr.n;
          b = sr.n/s2; // b=n/sigma^2
-         mur = b*yb/(a+b) + gen.normal()/sqrt(a+b);
+         mur = b*yb/(a+b) + normal(gen)/sqrt(a+b);
          //do birth
 //cout << "birth, mul=" << mul << " mur=" << mur << endl;
          //x.birthp(nx,v,c,mul,mur);
@@ -175,7 +178,7 @@ bool bd(tree& x, xinfo& xi, dinfo& di, pinfo& pi, RNG& gen)
       //draw nog node, any nog node is a possibility
       tree::npv nognds; //nog nodes
       x.getnogs(nognds);
-      size_t ni = floor(gen.uniform()*nognds.size()); 
+      size_t ni = floor(uniform(gen)*nognds.size()); 
       tree::tree_p nx = nognds[ni]; //the nog node we might kill children at
 
       //--------------------------------------------------
@@ -250,14 +253,14 @@ bool bd(tree& x, xinfo& xi, dinfo& di, pinfo& pi, RNG& gen)
       double a,b,s2,yb;
       double mu;
       size_t n;
-      if(gen.uniform()<alpha) {
+      if(uniform(gen)<alpha) {
          //draw mu for nog (which will be bot)
          n = sl.n + sr.n;
          a= 1.0/(pi.tau*pi.tau); //a = 1/tau^2
          s2 = pi.sigma*pi.sigma; // sigma^2
          yb = (sl.sy+sr.sy)/n;
          b = n/s2; // b=n/sigma^2
-         mu = b*yb/(a+b) + gen.normal()/sqrt(a+b);
+         mu = b*yb/(a+b) + normal(gen)/sqrt(a+b);
          //do death
 //cout << "death, mu=" << mu << endl;
          //x.deathp(nx,mu);

@@ -3,14 +3,14 @@
 //
 
 #include <cstring>
+#include <random>
 #include "compute_bart.h"
 #include "funs.h"
 
 
 void compute_bart::fit() {
    //random number generation
-   uint seed=99;
-   RNG gen(seed); //this one random number generator is used in all draws
+   std::default_random_engine gen(99);
 
    //y stats
    double miny = INFINITY; //use range of y to calibrate prior for bottom node mu's
@@ -61,6 +61,8 @@ void compute_bart::fit() {
    double ats; //place for average tree size
    double anb; //place for average number of bottom nodes
 
+   std::chi_squared_distribution<double> chi_squared(run_params.nu+insample_data.n);
+
    //mcmc
    for(size_t i=0;i<(run_params.nd+run_params.burn);++i) {
       //if(i%100==0) cout << "i: " << i << endl;
@@ -79,7 +81,7 @@ void compute_bart::fit() {
       //draw sigma
       rss=0.0;
       for(size_t k=0;k<insample_data.n;++k) {restemp=insample_data.y[k]-allfit[k]; rss += restemp*restemp;}
-      mcmc_params.sigma = sqrt((run_params.nu*run_params.lambda + rss)/gen.chi_square(run_params.nu+insample_data.n));
+      mcmc_params.sigma = sqrt((run_params.nu*run_params.lambda + rss)/chi_squared(gen));
       ats = 0.0; anb=0.0;
       for(size_t k=0;k<run_params.m;++k) {
          ats += t[k].treesize();

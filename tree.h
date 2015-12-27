@@ -6,9 +6,9 @@
 #include <cmath>
 #include <cstddef>
 #include <vector>
+#include <random>
 
 #include "info.h"
-#include "rng.h"
 
 /*
 Class is a bit confusing because sometimes you
@@ -47,9 +47,9 @@ public:
    //friends
    friend std::istream& operator>>(std::istream&, tree&);
 #ifdef MPIBART
-   friend bool bd(tree& x, xinfo& xi, pinfo& pi, RNG& gen, size_t numslaves);
+   friend bool bd(tree& x, xinfo& xi, pinfo& pi, std::default_random_engine& gen, size_t numslaves);
 #else
-   friend bool bd(tree& x, xinfo& xi, dinfo& di, pinfo& pi, RNG& gen);
+   friend bool bd(tree& x, xinfo& xi, dinfo& di, pinfo& pi, std::default_random_engine& gen);
 #endif
 
    //------------------------------

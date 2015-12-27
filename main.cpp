@@ -38,7 +38,6 @@ int main(int argc, char **argv) {
    bart_regressor.set_outsample_matrix(n, p, x);
    bart_regressor.set_outsample_target(n, y1);
    bart_regressor.fit();
-   // bart_regressor.predict(n, p, x, y);
 
    for(size_t i=0;i<n;++i) std::cout << y1[i] << ' ';
    std::cout << std::endl;

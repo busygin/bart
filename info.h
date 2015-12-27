@@ -41,11 +41,11 @@ struct pinfo {
 
 // run info
 struct rinfo {
-   rinfo(size_t nd_=1000, double lambda_=1.0, size_t burn_=100, size_t m_=200, size_t nc_=100, double nu_=3.0, double kfac_=2.0) {
+   rinfo(size_t nd_=1000, double lambda_=1.0, size_t burn_=100, size_t m_=200, size_t nc_=100, int nu_=3, double kfac_=2.0) {
       init(nd_, lambda_, burn_, m_, nc_, nu_, kfac_);
    }
 
-   void init(size_t nd_, double lambda_, size_t burn_, size_t m_, size_t nc_, double nu_, double kfac_) {
+   void init(size_t nd_, double lambda_, size_t burn_, size_t m_, size_t nc_, int nu_, double kfac_) {
       nd = nd_;
       lambda = lambda_;
       burn = burn_;
@@ -60,7 +60,7 @@ struct rinfo {
    size_t burn;
    size_t m;
    size_t nc;
-   double nu;
+   int nu;
    double kfac;
 };
 

@@ -13,22 +13,6 @@ double pn(double x, double m, double v)
    return exp(-.5*dif*dif/v)/sqrt(2*PI*v);
 }
 //--------------------------------------------------
-// draw from discrete distributin given by p, return index
-int rdisc(double *p, RNG& gen)
-{
-
-   double sum;
-   double u = gen.uniform();
-
-    int i=0;
-    sum=p[0];
-    while(sum<u) {
-       i += 1;
-       sum += p[i];
-    }
-    return i;
-}
-//--------------------------------------------------
 //evalute tree tr on grid given by xi and write to os
 void grm(tree& tr, xinfo& xi, std::ostream& os) 
 {
@@ -572,7 +556,7 @@ void partition(tree& t, xinfo& xi, dinfo& di, std::vector<size_t>& pv)
 //--------------------------------------------------
 // draw all the bottom node mu's
 
-void drmu(tree& t, xinfo& xi, dinfo& di, pinfo& pi, RNG& gen)
+void drmu(tree& t, xinfo& xi, dinfo& di, pinfo& pi, std::default_random_engine& gen)
 {
    tree::npv bnv;
    std::vector<sinfo> sv;
@@ -582,10 +566,12 @@ void drmu(tree& t, xinfo& xi, dinfo& di, pinfo& pi, RNG& gen)
    double sig2 = pi.sigma * pi.sigma;
    double b,ybar;
 
+   std::normal_distribution<double> normal(0.0, 1.0);
+
    for(tree::npv::size_type i=0;i!=bnv.size();i++) {
       b = sv[i].n/sig2;
       ybar = sv[i].sy/sv[i].n;
-      bnv[i]->setm(b*ybar/(a+b) + gen.normal()/sqrt(a+b));
+      bnv[i]->setm(b*ybar/(a+b) + normal(gen)/sqrt(a+b));
    }
 }
 
@@ -616,7 +602,7 @@ void MPIslavedrmu(tree& t, xinfo& xi, dinfo& di)
 
 //---------------------------------------------------
 // Draw all the bottom node mu's -- master code for MPI version
-void MPImasterdrmu(tree& t, xinfo& xi, pinfo& pi, RNG& gen, size_t numslaves)
+void MPImasterdrmu(tree& t, xinfo& xi, pinfo& pi, std::default_random_engine& gen, size_t numslaves)
 {
    tree::npv bnv;
    std::vector<sinfo> sv;
@@ -633,10 +619,12 @@ void MPImasterdrmu(tree& t, xinfo& xi, pinfo& pi, RNG& gen, size_t numslaves)
    double sig2 = pi.sigma * pi.sigma;
    double b,ybar;
 
+   std::normal_distribution<double> normal(0.0, 1.0);
+
    for(tree::npv::size_type i=0;i!=bnv.size();i++) {
       b = sv[i].n/sig2;
       ybar = sv[i].sy/sv[i].n;
-      bnv[i]->setm(b*ybar/(a+b) + gen.normal()/sqrt(a+b));
+      bnv[i]->setm(b*ybar/(a+b) + normal(gen)/sqrt(a+b));
 		temp=bnv[i]->getm();
 		MPI_Pack(&temp,1,MPI_DOUBLE,buffer,bufsz,&position,MPI_COMM_WORLD);
    }
@@ -733,13 +721,14 @@ void makeypred(dinfo dip, xinfo &xi, std::vector<tree> &t, double sigma, double 
 {
 	uint seed;
 	seed=(unsigned int)time(NULL);
-	RNG rnrm(seed);
+	std::default_random_engine rnrm(seed);
+        std::normal_distribution<double> normal_sigma(0.0, sigma);
 	double* fpredtemp=0; //temporary fit vector to compute prediction
 	size_t m;
 
 	fpredtemp = new double[dip.n];
 	m=t.size();
-    for(size_t i=0;i<dip.n;i++) ppredmean[i]=rnrm.normal(0.0,sigma);
+    for(size_t i=0;i<dip.n;i++) ppredmean[i]=normal_sigma(rnrm);
 	for(size_t j=0;j<m;j++) {
 		fit(t[j],xi,dip,fpredtemp);
 		for(size_t k=0;k<dip.n;k++) ppredmean[k] += fpredtemp[k];

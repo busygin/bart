@@ -1,8 +1,8 @@
 #include <cmath>
 #include <iostream>
+#include <random>
 #include "tree.h"
 #include "info.h"
-#include "rng.h" 
 
 using std::cout;
 using std::endl;
@@ -17,12 +17,6 @@ double pn(
    double x,    //variate
    double m,    //mean
    double v     //variance
-);
-//--------------------------------------------------
-//draw from a discrete distribution
-int rdisc(
-   double *p,   //vector of probabilities
-   RNG& gen     //random number generator
 );
 //--------------------------------------------------
 //evaluate tree tr on grid xi, write to os
@@ -63,9 +57,9 @@ void partition(tree& t, xinfo& xi, dinfo& di, std::vector<size_t>& pv);
 //--------------------------------------------------
 // draw all the bottom node mu's
 #ifdef MPIBART
-void MPImasterdrmu(tree& t, xinfo& xi, pinfo& pi, RNG& gen, size_t numslaves);
+void MPImasterdrmu(tree& t, xinfo& xi, pinfo& pi, std::default_random_engine& gen, size_t numslaves);
 #else
-void drmu(tree& t, xinfo& xi, dinfo& di, pinfo& pi, RNG& gen);
+void drmu(tree& t, xinfo& xi, dinfo& di, pinfo& pi, std::default_random_engine& gen);
 #endif
 //--------------------------------------------------
 //write cutpoint information to screen
