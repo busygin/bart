@@ -36,8 +36,8 @@ public:
       mcmc_params.init(pb_, alpha_, beta_, tau_, sigma_);
    }
 
-   void set_run_params(size_t nd_=1000, double lambda_=1.0, size_t burn_=100, size_t m_=200, size_t nc_=100, int nu_=3, double kfac_=2.0) {
-      run_params.init(nd_, lambda_, burn_, m_, nc_, nu_, kfac_);
+   void set_run_params(bool regression_=true, size_t nd_=1000, double lambda_=1.0, size_t burn_=100, size_t m_=200, size_t nc_=100, int nu_=3, double kfac_=2.0) {
+      run_params.init(nd_, lambda_, burn_, m_, nc_, nu_, kfac_, regression_);
    }
 
    void fit();

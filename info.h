@@ -41,11 +41,11 @@ struct pinfo {
 
 // run info
 struct rinfo {
-   rinfo(size_t nd_=1000, double lambda_=1.0, size_t burn_=100, size_t m_=200, size_t nc_=100, int nu_=3, double kfac_=2.0) {
-      init(nd_, lambda_, burn_, m_, nc_, nu_, kfac_);
+   rinfo(size_t nd_=1000, double lambda_=1.0, size_t burn_=100, size_t m_=200, size_t nc_=100, int nu_=3, double kfac_=2.0, bool regression_=true) {
+      init(nd_, lambda_, burn_, m_, nc_, nu_, kfac_, regression_);
    }
 
-   void init(size_t nd_, double lambda_, size_t burn_, size_t m_, size_t nc_, int nu_, double kfac_) {
+   void init(size_t nd_, double lambda_, size_t burn_, size_t m_, size_t nc_, int nu_, double kfac_, bool regression_) {
       nd = nd_;
       lambda = lambda_;
       burn = burn_;
@@ -53,6 +53,7 @@ struct rinfo {
       nc = nc_;
       nu = nu_;
       kfac = kfac_;
+      regression = regression_;
    }
 
    size_t nd;
@@ -62,6 +63,8 @@ struct rinfo {
    size_t nc;
    int nu;
    double kfac;
+
+   bool regression;
 };
 
 //sufficient statistics for 1 node

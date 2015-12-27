@@ -9,6 +9,8 @@
 
 
 void compute_bart::fit() {
+   std::cout << "Running " << (run_params.regression ? "regression\n" : "classification\n");
+
    //random number generation
    std::default_random_engine gen(99);
 
@@ -34,7 +36,8 @@ void compute_bart::fit() {
    }
 
    mcmc_params.tau = (maxy-miny)/(2*run_params.kfac*sqrt((double)run_params.m));
-   mcmc_params.sigma = shat;
+
+   if (run_params.regression) mcmc_params.sigma = shat;
 
    //x cutpoints
    makexinfo(insample_data.p, insample_data.n, insample_data.x, xi, run_params.nc);
@@ -80,9 +83,11 @@ void compute_bart::fit() {
          for(size_t k=0;k<insample_data.n;++k) allfit[k] += ftemp[k];
       }
       //draw sigma
-      rss=0.0;
-      for(size_t k=0;k<insample_data.n;++k) {restemp=insample_data.y[k]-allfit[k]; rss += restemp*restemp;}
-      mcmc_params.sigma = sqrt((run_params.nu*run_params.lambda + rss)/chi_squared(gen));
+      if (run_params.regression) {
+         rss=0.0;
+         for(size_t k=0;k<insample_data.n;++k) {restemp=insample_data.y[k]-allfit[k]; rss += restemp*restemp;}
+         mcmc_params.sigma = sqrt((run_params.nu*run_params.lambda + rss)/chi_squared(gen));
+      }
       ats = 0.0; anb=0.0;
       for(size_t k=0;k<run_params.m;++k) {
          ats += t[k].treesize();

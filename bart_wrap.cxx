@@ -3641,6 +3641,59 @@ SWIG_CanCastAsInteger(double *d, double min, double max) {
 
 
 SWIGINTERN int
+SWIG_AsVal_long (PyObject *obj, long* val)
+{
+  if (PyInt_Check(obj)) {
+    if (val) *val = PyInt_AsLong(obj);
+    return SWIG_OK;
+  } else if (PyLong_Check(obj)) {
+    long v = PyLong_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    long v = PyInt_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      double d;
+      int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, LONG_MIN, LONG_MAX)) {
+	if (val) *val = (long)(d);
+	return res;
+      }
+    }
+  }
+#endif
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_bool (PyObject *obj, bool *val)
+{
+  int r;
+  if (!PyBool_Check(obj))
+    return SWIG_ERROR;
+  r = PyObject_IsTrue(obj);
+  if (r == -1)
+    return SWIG_ERROR;
+  if (val) *val = r ? true : false;
+  return SWIG_OK;
+}
+
+
+SWIGINTERN int
 SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val) 
 {
 #if PY_VERSION_HEX < 0x03000000
@@ -3705,6 +3758,32 @@ SWIG_AsVal_size_t (PyObject * obj, size_t *val)
   unsigned long v;
   int res = SWIG_AsVal_unsigned_SS_long (obj, val ? &v : 0);
   if (SWIG_IsOK(res) && val) *val = static_cast< size_t >(v);
+  return res;
+}
+
+
+#include <limits.h>
+#if !defined(SWIG_NO_LLONG_MAX)
+# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
+#   define LLONG_MAX __LONG_LONG_MAX__
+#   define LLONG_MIN (-LLONG_MAX - 1LL)
+#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
+# endif
+#endif
+
+
+SWIGINTERN int
+SWIG_AsVal_int (PyObject * obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< int >(v);
+    }
+  }  
   return res;
 }
 
@@ -4330,28 +4409,121 @@ fail:
 SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   compute_bart *arg1 = (compute_bart *) 0 ;
-  size_t arg2 ;
-  double arg3 ;
-  size_t arg4 ;
+  bool arg2 ;
+  size_t arg3 ;
+  double arg4 ;
   size_t arg5 ;
   size_t arg6 ;
-  double arg7 ;
-  double arg8 ;
+  size_t arg7 ;
+  int arg8 ;
+  double arg9 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  size_t val2 ;
+  bool val2 ;
   int ecode2 = 0 ;
-  double val3 ;
+  size_t val3 ;
   int ecode3 = 0 ;
-  size_t val4 ;
+  double val4 ;
   int ecode4 = 0 ;
   size_t val5 ;
   int ecode5 = 0 ;
   size_t val6 ;
   int ecode6 = 0 ;
-  double val7 ;
+  size_t val7 ;
   int ecode7 = 0 ;
-  double val8 ;
+  int val8 ;
+  int ecode8 = 0 ;
+  double val9 ;
+  int ecode9 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOO:compute_bart_set_run_params",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_compute_bart, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "compute_bart_set_run_params" "', argument " "1"" of type '" "compute_bart *""'"); 
+  }
+  arg1 = reinterpret_cast< compute_bart * >(argp1);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "bool""'");
+  } 
+  arg2 = static_cast< bool >(val2);
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "size_t""'");
+  } 
+  arg3 = static_cast< size_t >(val3);
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "double""'");
+  } 
+  arg4 = static_cast< double >(val4);
+  ecode5 = SWIG_AsVal_size_t(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "compute_bart_set_run_params" "', argument " "5"" of type '" "size_t""'");
+  } 
+  arg5 = static_cast< size_t >(val5);
+  ecode6 = SWIG_AsVal_size_t(obj5, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "compute_bart_set_run_params" "', argument " "6"" of type '" "size_t""'");
+  } 
+  arg6 = static_cast< size_t >(val6);
+  ecode7 = SWIG_AsVal_size_t(obj6, &val7);
+  if (!SWIG_IsOK(ecode7)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "compute_bart_set_run_params" "', argument " "7"" of type '" "size_t""'");
+  } 
+  arg7 = static_cast< size_t >(val7);
+  ecode8 = SWIG_AsVal_int(obj7, &val8);
+  if (!SWIG_IsOK(ecode8)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "compute_bart_set_run_params" "', argument " "8"" of type '" "int""'");
+  } 
+  arg8 = static_cast< int >(val8);
+  ecode9 = SWIG_AsVal_double(obj8, &val9);
+  if (!SWIG_IsOK(ecode9)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "compute_bart_set_run_params" "', argument " "9"" of type '" "double""'");
+  } 
+  arg9 = static_cast< double >(val9);
+  (arg1)->set_run_params(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  compute_bart *arg1 = (compute_bart *) 0 ;
+  bool arg2 ;
+  size_t arg3 ;
+  double arg4 ;
+  size_t arg5 ;
+  size_t arg6 ;
+  size_t arg7 ;
+  int arg8 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool val2 ;
+  int ecode2 = 0 ;
+  size_t val3 ;
+  int ecode3 = 0 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  size_t val5 ;
+  int ecode5 = 0 ;
+  size_t val6 ;
+  int ecode6 = 0 ;
+  size_t val7 ;
+  int ecode7 = 0 ;
+  int val8 ;
   int ecode8 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -4368,21 +4540,21 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_0(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "compute_bart_set_run_params" "', argument " "1"" of type '" "compute_bart *""'"); 
   }
   arg1 = reinterpret_cast< compute_bart * >(argp1);
-  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "bool""'");
   } 
-  arg2 = static_cast< size_t >(val2);
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  arg2 = static_cast< bool >(val2);
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "size_t""'");
   } 
-  arg3 = static_cast< double >(val3);
-  ecode4 = SWIG_AsVal_size_t(obj3, &val4);
+  arg3 = static_cast< size_t >(val3);
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
   if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "double""'");
   } 
-  arg4 = static_cast< size_t >(val4);
+  arg4 = static_cast< double >(val4);
   ecode5 = SWIG_AsVal_size_t(obj4, &val5);
   if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "compute_bart_set_run_params" "', argument " "5"" of type '" "size_t""'");
@@ -4393,16 +4565,16 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_0(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "compute_bart_set_run_params" "', argument " "6"" of type '" "size_t""'");
   } 
   arg6 = static_cast< size_t >(val6);
-  ecode7 = SWIG_AsVal_double(obj6, &val7);
+  ecode7 = SWIG_AsVal_size_t(obj6, &val7);
   if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "compute_bart_set_run_params" "', argument " "7"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "compute_bart_set_run_params" "', argument " "7"" of type '" "size_t""'");
   } 
-  arg7 = static_cast< double >(val7);
-  ecode8 = SWIG_AsVal_double(obj7, &val8);
+  arg7 = static_cast< size_t >(val7);
+  ecode8 = SWIG_AsVal_int(obj7, &val8);
   if (!SWIG_IsOK(ecode8)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "compute_bart_set_run_params" "', argument " "8"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "compute_bart_set_run_params" "', argument " "8"" of type '" "int""'");
   } 
-  arg8 = static_cast< double >(val8);
+  arg8 = static_cast< int >(val8);
   (arg1)->set_run_params(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4411,28 +4583,28 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   compute_bart *arg1 = (compute_bart *) 0 ;
-  size_t arg2 ;
-  double arg3 ;
-  size_t arg4 ;
+  bool arg2 ;
+  size_t arg3 ;
+  double arg4 ;
   size_t arg5 ;
   size_t arg6 ;
-  double arg7 ;
+  size_t arg7 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  size_t val2 ;
+  bool val2 ;
   int ecode2 = 0 ;
-  double val3 ;
+  size_t val3 ;
   int ecode3 = 0 ;
-  size_t val4 ;
+  double val4 ;
   int ecode4 = 0 ;
   size_t val5 ;
   int ecode5 = 0 ;
   size_t val6 ;
   int ecode6 = 0 ;
-  double val7 ;
+  size_t val7 ;
   int ecode7 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -4448,21 +4620,21 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_1(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "compute_bart_set_run_params" "', argument " "1"" of type '" "compute_bart *""'"); 
   }
   arg1 = reinterpret_cast< compute_bart * >(argp1);
-  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "bool""'");
   } 
-  arg2 = static_cast< size_t >(val2);
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  arg2 = static_cast< bool >(val2);
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "size_t""'");
   } 
-  arg3 = static_cast< double >(val3);
-  ecode4 = SWIG_AsVal_size_t(obj3, &val4);
+  arg3 = static_cast< size_t >(val3);
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
   if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "double""'");
   } 
-  arg4 = static_cast< size_t >(val4);
+  arg4 = static_cast< double >(val4);
   ecode5 = SWIG_AsVal_size_t(obj4, &val5);
   if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "compute_bart_set_run_params" "', argument " "5"" of type '" "size_t""'");
@@ -4473,11 +4645,11 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_1(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "compute_bart_set_run_params" "', argument " "6"" of type '" "size_t""'");
   } 
   arg6 = static_cast< size_t >(val6);
-  ecode7 = SWIG_AsVal_double(obj6, &val7);
+  ecode7 = SWIG_AsVal_size_t(obj6, &val7);
   if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "compute_bart_set_run_params" "', argument " "7"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "compute_bart_set_run_params" "', argument " "7"" of type '" "size_t""'");
   } 
-  arg7 = static_cast< double >(val7);
+  arg7 = static_cast< size_t >(val7);
   (arg1)->set_run_params(arg2,arg3,arg4,arg5,arg6,arg7);
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4486,21 +4658,21 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   compute_bart *arg1 = (compute_bart *) 0 ;
-  size_t arg2 ;
-  double arg3 ;
-  size_t arg4 ;
+  bool arg2 ;
+  size_t arg3 ;
+  double arg4 ;
   size_t arg5 ;
   size_t arg6 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  size_t val2 ;
+  bool val2 ;
   int ecode2 = 0 ;
-  double val3 ;
+  size_t val3 ;
   int ecode3 = 0 ;
-  size_t val4 ;
+  double val4 ;
   int ecode4 = 0 ;
   size_t val5 ;
   int ecode5 = 0 ;
@@ -4519,21 +4691,21 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_2(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "compute_bart_set_run_params" "', argument " "1"" of type '" "compute_bart *""'"); 
   }
   arg1 = reinterpret_cast< compute_bart * >(argp1);
-  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "bool""'");
   } 
-  arg2 = static_cast< size_t >(val2);
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  arg2 = static_cast< bool >(val2);
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "size_t""'");
   } 
-  arg3 = static_cast< double >(val3);
-  ecode4 = SWIG_AsVal_size_t(obj3, &val4);
+  arg3 = static_cast< size_t >(val3);
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
   if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "double""'");
   } 
-  arg4 = static_cast< size_t >(val4);
+  arg4 = static_cast< double >(val4);
   ecode5 = SWIG_AsVal_size_t(obj4, &val5);
   if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "compute_bart_set_run_params" "', argument " "5"" of type '" "size_t""'");
@@ -4552,20 +4724,20 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   compute_bart *arg1 = (compute_bart *) 0 ;
-  size_t arg2 ;
-  double arg3 ;
-  size_t arg4 ;
+  bool arg2 ;
+  size_t arg3 ;
+  double arg4 ;
   size_t arg5 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  size_t val2 ;
+  bool val2 ;
   int ecode2 = 0 ;
-  double val3 ;
+  size_t val3 ;
   int ecode3 = 0 ;
-  size_t val4 ;
+  double val4 ;
   int ecode4 = 0 ;
   size_t val5 ;
   int ecode5 = 0 ;
@@ -4581,21 +4753,21 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_3(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "compute_bart_set_run_params" "', argument " "1"" of type '" "compute_bart *""'"); 
   }
   arg1 = reinterpret_cast< compute_bart * >(argp1);
-  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "bool""'");
   } 
-  arg2 = static_cast< size_t >(val2);
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  arg2 = static_cast< bool >(val2);
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "size_t""'");
   } 
-  arg3 = static_cast< double >(val3);
-  ecode4 = SWIG_AsVal_size_t(obj3, &val4);
+  arg3 = static_cast< size_t >(val3);
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
   if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "double""'");
   } 
-  arg4 = static_cast< size_t >(val4);
+  arg4 = static_cast< double >(val4);
   ecode5 = SWIG_AsVal_size_t(obj4, &val5);
   if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "compute_bart_set_run_params" "', argument " "5"" of type '" "size_t""'");
@@ -4609,19 +4781,19 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_5(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   compute_bart *arg1 = (compute_bart *) 0 ;
-  size_t arg2 ;
-  double arg3 ;
-  size_t arg4 ;
+  bool arg2 ;
+  size_t arg3 ;
+  double arg4 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  size_t val2 ;
+  bool val2 ;
   int ecode2 = 0 ;
-  double val3 ;
+  size_t val3 ;
   int ecode3 = 0 ;
-  size_t val4 ;
+  double val4 ;
   int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -4634,21 +4806,21 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_4(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "compute_bart_set_run_params" "', argument " "1"" of type '" "compute_bart *""'"); 
   }
   arg1 = reinterpret_cast< compute_bart * >(argp1);
-  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "bool""'");
   } 
-  arg2 = static_cast< size_t >(val2);
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  arg2 = static_cast< bool >(val2);
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "size_t""'");
   } 
-  arg3 = static_cast< double >(val3);
-  ecode4 = SWIG_AsVal_size_t(obj3, &val4);
+  arg3 = static_cast< size_t >(val3);
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
   if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "compute_bart_set_run_params" "', argument " "4"" of type '" "double""'");
   } 
-  arg4 = static_cast< size_t >(val4);
+  arg4 = static_cast< double >(val4);
   (arg1)->set_run_params(arg2,arg3,arg4);
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4657,16 +4829,16 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_5(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_6(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   compute_bart *arg1 = (compute_bart *) 0 ;
-  size_t arg2 ;
-  double arg3 ;
+  bool arg2 ;
+  size_t arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  size_t val2 ;
+  bool val2 ;
   int ecode2 = 0 ;
-  double val3 ;
+  size_t val3 ;
   int ecode3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -4678,16 +4850,16 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_5(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "compute_bart_set_run_params" "', argument " "1"" of type '" "compute_bart *""'"); 
   }
   arg1 = reinterpret_cast< compute_bart * >(argp1);
-  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "bool""'");
   } 
-  arg2 = static_cast< size_t >(val2);
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  arg2 = static_cast< bool >(val2);
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "compute_bart_set_run_params" "', argument " "3"" of type '" "size_t""'");
   } 
-  arg3 = static_cast< double >(val3);
+  arg3 = static_cast< size_t >(val3);
   (arg1)->set_run_params(arg2,arg3);
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4696,13 +4868,13 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_6(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_7(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   compute_bart *arg1 = (compute_bart *) 0 ;
-  size_t arg2 ;
+  bool arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  size_t val2 ;
+  bool val2 ;
   int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -4713,11 +4885,11 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_6(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "compute_bart_set_run_params" "', argument " "1"" of type '" "compute_bart *""'"); 
   }
   arg1 = reinterpret_cast< compute_bart * >(argp1);
-  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "size_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "compute_bart_set_run_params" "', argument " "2"" of type '" "bool""'");
   } 
-  arg2 = static_cast< size_t >(val2);
+  arg2 = static_cast< bool >(val2);
   (arg1)->set_run_params(arg2);
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4726,7 +4898,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_7(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_compute_bart_set_run_params__SWIG_8(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   compute_bart *arg1 = (compute_bart *) 0 ;
   void *argp1 = 0 ;
@@ -4749,14 +4921,14 @@ fail:
 
 SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[9] = {
+  PyObject *argv[10] = {
     0
   };
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 8) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 9) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 1) {
@@ -4765,7 +4937,7 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_compute_bart, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_compute_bart_set_run_params__SWIG_7(self, args);
+      return _wrap_compute_bart_set_run_params__SWIG_8(self, args);
     }
   }
   if (argc == 2) {
@@ -4775,11 +4947,11 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
     _v = SWIG_CheckState(res);
     if (_v) {
       {
-        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        int res = SWIG_AsVal_bool(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_compute_bart_set_run_params__SWIG_6(self, args);
+        return _wrap_compute_bart_set_run_params__SWIG_7(self, args);
       }
     }
   }
@@ -4790,16 +4962,16 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
     _v = SWIG_CheckState(res);
     if (_v) {
       {
-        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        int res = SWIG_AsVal_bool(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
-          int res = SWIG_AsVal_double(argv[2], NULL);
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          return _wrap_compute_bart_set_run_params__SWIG_5(self, args);
+          return _wrap_compute_bart_set_run_params__SWIG_6(self, args);
         }
       }
     }
@@ -4811,21 +4983,21 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
     _v = SWIG_CheckState(res);
     if (_v) {
       {
-        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        int res = SWIG_AsVal_bool(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
-          int res = SWIG_AsVal_double(argv[2], NULL);
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
           {
-            int res = SWIG_AsVal_size_t(argv[3], NULL);
+            int res = SWIG_AsVal_double(argv[3], NULL);
             _v = SWIG_CheckState(res);
           }
           if (_v) {
-            return _wrap_compute_bart_set_run_params__SWIG_4(self, args);
+            return _wrap_compute_bart_set_run_params__SWIG_5(self, args);
           }
         }
       }
@@ -4838,17 +5010,17 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
     _v = SWIG_CheckState(res);
     if (_v) {
       {
-        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        int res = SWIG_AsVal_bool(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
-          int res = SWIG_AsVal_double(argv[2], NULL);
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
           {
-            int res = SWIG_AsVal_size_t(argv[3], NULL);
+            int res = SWIG_AsVal_double(argv[3], NULL);
             _v = SWIG_CheckState(res);
           }
           if (_v) {
@@ -4857,7 +5029,7 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
               _v = SWIG_CheckState(res);
             }
             if (_v) {
-              return _wrap_compute_bart_set_run_params__SWIG_3(self, args);
+              return _wrap_compute_bart_set_run_params__SWIG_4(self, args);
             }
           }
         }
@@ -4871,17 +5043,17 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
     _v = SWIG_CheckState(res);
     if (_v) {
       {
-        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        int res = SWIG_AsVal_bool(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
-          int res = SWIG_AsVal_double(argv[2], NULL);
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
           {
-            int res = SWIG_AsVal_size_t(argv[3], NULL);
+            int res = SWIG_AsVal_double(argv[3], NULL);
             _v = SWIG_CheckState(res);
           }
           if (_v) {
@@ -4895,7 +5067,7 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
                 _v = SWIG_CheckState(res);
               }
               if (_v) {
-                return _wrap_compute_bart_set_run_params__SWIG_2(self, args);
+                return _wrap_compute_bart_set_run_params__SWIG_3(self, args);
               }
             }
           }
@@ -4910,17 +5082,17 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
     _v = SWIG_CheckState(res);
     if (_v) {
       {
-        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        int res = SWIG_AsVal_bool(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
-          int res = SWIG_AsVal_double(argv[2], NULL);
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
           {
-            int res = SWIG_AsVal_size_t(argv[3], NULL);
+            int res = SWIG_AsVal_double(argv[3], NULL);
             _v = SWIG_CheckState(res);
           }
           if (_v) {
@@ -4935,11 +5107,11 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
               }
               if (_v) {
                 {
-                  int res = SWIG_AsVal_double(argv[6], NULL);
+                  int res = SWIG_AsVal_size_t(argv[6], NULL);
                   _v = SWIG_CheckState(res);
                 }
                 if (_v) {
-                  return _wrap_compute_bart_set_run_params__SWIG_1(self, args);
+                  return _wrap_compute_bart_set_run_params__SWIG_2(self, args);
                 }
               }
             }
@@ -4955,17 +5127,17 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
     _v = SWIG_CheckState(res);
     if (_v) {
       {
-        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        int res = SWIG_AsVal_bool(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
-          int res = SWIG_AsVal_double(argv[2], NULL);
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
           {
-            int res = SWIG_AsVal_size_t(argv[3], NULL);
+            int res = SWIG_AsVal_double(argv[3], NULL);
             _v = SWIG_CheckState(res);
           }
           if (_v) {
@@ -4980,16 +5152,73 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
               }
               if (_v) {
                 {
-                  int res = SWIG_AsVal_double(argv[6], NULL);
+                  int res = SWIG_AsVal_size_t(argv[6], NULL);
                   _v = SWIG_CheckState(res);
                 }
                 if (_v) {
                   {
-                    int res = SWIG_AsVal_double(argv[7], NULL);
+                    int res = SWIG_AsVal_int(argv[7], NULL);
                     _v = SWIG_CheckState(res);
                   }
                   if (_v) {
-                    return _wrap_compute_bart_set_run_params__SWIG_0(self, args);
+                    return _wrap_compute_bart_set_run_params__SWIG_1(self, args);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 9) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_compute_bart, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_bool(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_size_t(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              {
+                int res = SWIG_AsVal_size_t(argv[5], NULL);
+                _v = SWIG_CheckState(res);
+              }
+              if (_v) {
+                {
+                  int res = SWIG_AsVal_size_t(argv[6], NULL);
+                  _v = SWIG_CheckState(res);
+                }
+                if (_v) {
+                  {
+                    int res = SWIG_AsVal_int(argv[7], NULL);
+                    _v = SWIG_CheckState(res);
+                  }
+                  if (_v) {
+                    {
+                      int res = SWIG_AsVal_double(argv[8], NULL);
+                      _v = SWIG_CheckState(res);
+                    }
+                    if (_v) {
+                      return _wrap_compute_bart_set_run_params__SWIG_0(self, args);
+                    }
                   }
                 }
               }
@@ -5003,13 +5232,14 @@ SWIGINTERN PyObject *_wrap_compute_bart_set_run_params(PyObject *self, PyObject 
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'compute_bart_set_run_params'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    compute_bart::set_run_params(size_t,double,size_t,size_t,size_t,double,double)\n"
-    "    compute_bart::set_run_params(size_t,double,size_t,size_t,size_t,double)\n"
-    "    compute_bart::set_run_params(size_t,double,size_t,size_t,size_t)\n"
-    "    compute_bart::set_run_params(size_t,double,size_t,size_t)\n"
-    "    compute_bart::set_run_params(size_t,double,size_t)\n"
-    "    compute_bart::set_run_params(size_t,double)\n"
-    "    compute_bart::set_run_params(size_t)\n"
+    "    compute_bart::set_run_params(bool,size_t,double,size_t,size_t,size_t,int,double)\n"
+    "    compute_bart::set_run_params(bool,size_t,double,size_t,size_t,size_t,int)\n"
+    "    compute_bart::set_run_params(bool,size_t,double,size_t,size_t,size_t)\n"
+    "    compute_bart::set_run_params(bool,size_t,double,size_t,size_t)\n"
+    "    compute_bart::set_run_params(bool,size_t,double,size_t)\n"
+    "    compute_bart::set_run_params(bool,size_t,double)\n"
+    "    compute_bart::set_run_params(bool,size_t)\n"
+    "    compute_bart::set_run_params(bool)\n"
     "    compute_bart::set_run_params()\n");
   return 0;
 }

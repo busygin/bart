@@ -119,8 +119,8 @@ class compute_bart(_object):
     def set_mcmc_params(self, pb_=0.5, alpha_=0.95, beta_=2.0, tau_=1.0, sigma_=1.0):
         return _bart.compute_bart_set_mcmc_params(self, pb_, alpha_, beta_, tau_, sigma_)
 
-    def set_run_params(self, nd_=1000, lambda_=1.0, burn_=100, m_=200, nc_=100, nu_=3.0, kfac_=2.0):
-        return _bart.compute_bart_set_run_params(self, nd_, lambda_, burn_, m_, nc_, nu_, kfac_)
+    def set_run_params(self, regression_=True, nd_=1000, lambda_=1.0, burn_=100, m_=200, nc_=100, nu_=3, kfac_=2.0):
+        return _bart.compute_bart_set_run_params(self, regression_, nd_, lambda_, burn_, m_, nc_, nu_, kfac_)
 
     def fit(self):
         return _bart.compute_bart_fit(self)
